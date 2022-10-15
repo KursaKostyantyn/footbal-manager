@@ -20,6 +20,8 @@ public class Club {
     private String city;
     private String country;
 
+    private int commission;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "club_player",
