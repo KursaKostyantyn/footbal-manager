@@ -1,18 +1,21 @@
 package com.example.footbalmanager.services;
 
-import com.example.footbalmanager.dao.ClubDAO;
-import com.example.footbalmanager.models.Club;
-import com.example.footbalmanager.models.Player;
-import com.example.footbalmanager.models.dto.ClubDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.example.footbalmanager.dao.ClubDAO;
+import com.example.footbalmanager.models.Club;
+import com.example.footbalmanager.models.Player;
+import com.example.footbalmanager.models.dto.ClubDTO;
 
 @AllArgsConstructor
 @Service
@@ -20,19 +23,34 @@ public class ClubService {
     private ClubDAO clubDAO;
     private PlayerService playerService;
 
-    private ClubDTO convertToDTO(Club club) {
+    @Bean
+    private void autoComplete() {
+        if (clubDAO.findAll().size() == 0) {
+            for (int i = 0; i < 15; i++) {
+                clubDAO.save(new Club("Dinamo" + i, 100000 * i, "Kiev" + i, "Ukraine" + i, 2 + i));
+            }
+        }
+    }
+
+
+    private ClubDTO convertClubToDTO(Club club) {
+
         return new ClubDTO(
+                club.getId(),
                 club.getName(),
                 club.getAccount(),
                 club.getCity(),
-                club.getCountry()
+                club.getCountry(),
+                club.getCommission(),
+                club.getPlayers()
         );
     }
 
-    public ResponseEntity<HttpStatus> saveClub(Club club) {
+    public ResponseEntity<ClubDTO> saveClub(Club club) {
         if (club != null) {
             clubDAO.save(club);
-            return new ResponseEntity<>(HttpStatus.OK);
+            ClubDTO clubDTO = convertClubToDTO(club);
+            return new ResponseEntity<>(clubDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -41,13 +59,13 @@ public class ClubService {
     public ResponseEntity<List<ClubDTO>> getAllClubs() {
         return new ResponseEntity<>(clubDAO.findAll()
                 .stream()
-                .map(this::convertToDTO)
+                .map(this::convertClubToDTO)
                 .collect(Collectors.toList()),
                 HttpStatus.OK);
     }
 
     public ResponseEntity<ClubDTO> getCLubDTOByID(int id) {
-        ClubDTO clubDTO = convertToDTO(clubDAO.findById(id).orElse(new Club()));
+        ClubDTO clubDTO = convertClubToDTO(clubDAO.findById(id).orElse(new Club()));
         if (clubDTO.getName() != null) {
             return new ResponseEntity<>(clubDTO, HttpStatus.OK);
         } else {
@@ -65,29 +83,33 @@ public class ClubService {
         if (oldClub.getName() != null) {
             club.setId(id);
             clubDAO.save(club);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(convertClubToDTO(club), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public ResponseEntity<HttpStatus> deleteClubById(int id) {
+    public ResponseEntity<ClubDTO> deleteClubById(int id) {
         Club club = clubDAO.findById(id).orElse(new Club());
         if (club.getName() != null) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            clubDAO.deleteById(id);
+            club.setPlayers(new ArrayList<>());
+            ClubDTO clubDTO = convertClubToDTO(club);
+            return new ResponseEntity<>(clubDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
     }
 
-    public ResponseEntity<HttpStatus> addPlayerToClubById(int playerId, int clubId) {
+    public ResponseEntity<ClubDTO> addPlayerToClubById(int playerId, int clubId) {
         Club club = clubDAO.findById(clubId).orElse(new Club());
         Player player = playerService.getPlayerById(playerId);
         if (club.getName() != null && player.getFirstName() != null) {
             club.getPlayers().add(player);
             clubDAO.save(club);
-            return new ResponseEntity<>(HttpStatus.OK);
+
+            return new ResponseEntity<>(convertClubToDTO(club),HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

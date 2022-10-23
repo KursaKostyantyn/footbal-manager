@@ -1,16 +1,17 @@
 package com.example.footbalmanager.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "club")
 @Entity
 public class Player {
     @Id
@@ -21,7 +22,8 @@ public class Player {
     private int age;
     private LocalDate startDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinTable(
             name = "club_player",
             joinColumns = @JoinColumn(name = "player_id"),

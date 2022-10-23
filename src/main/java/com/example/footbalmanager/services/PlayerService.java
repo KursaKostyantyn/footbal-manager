@@ -1,9 +1,9 @@
 package com.example.footbalmanager.services;
 
-import com.example.footbalmanager.dao.PlayerDAO;
-import com.example.footbalmanager.models.Player;
-import com.example.footbalmanager.models.dto.PlayerDTO;
+
+import com.example.footbalmanager.models.Club;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,25 +11,57 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.footbalmanager.dao.PlayerDAO;
+import com.example.footbalmanager.models.Player;
+import com.example.footbalmanager.models.dto.PlayerDTO;
+
 @AllArgsConstructor
 @Service
 public class PlayerService {
     private PlayerDAO playerDAO;
 
+    @Bean
+    private void autoCompletePlayers() {
+        if (playerDAO.findAll().size() == 0) {
+            for (int i = 0; i < 10; i++) {
+                playerDAO.save(new Player("Vasya" + i, "Koval" + i, 18 + i, "2017-09-1" + i));
+            }
+        }
+    }
+
+
     private PlayerDTO convertToPlayerDTO(Player player) {
         return new PlayerDTO(
+                player.getId(),
                 player.getFirstName(),
                 player.getLastName(),
                 player.getAge(),
-                player.getStartDate()
+                player.getStartDate(),
+                clubWithoutPlayers(player.getClub())
         );
 
     }
 
-    public ResponseEntity<?> savePlayer(Player player) {
+    private Club clubWithoutPlayers(Club club) {
+        if (club != null) {
+            return new Club(
+                    club.getId(),
+                    club.getName(),
+                    club.getAccount(),
+                    club.getCity(),
+                    club.getCountry(),
+                    club.getCommission()
+            );
+        }
+        return new Club();
+    }
+
+
+    public ResponseEntity<PlayerDTO> savePlayer(Player player) {
         if (player != null) {
             playerDAO.save(player);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            PlayerDTO playerDTO = convertToPlayerDTO(player);
+            return new ResponseEntity<>(playerDTO, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -70,11 +102,12 @@ public class PlayerService {
         }
     }
 
-    public ResponseEntity<HttpStatus> deletePlayerById(int id) {
+    public ResponseEntity<PlayerDTO> deletePlayerById(int id) {
         Player player = playerDAO.findById(id).orElse(new Player());
         if (player.getFirstName() != null) {
             playerDAO.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            PlayerDTO playerDTO = convertToPlayerDTO(player);
+            return new ResponseEntity<>(playerDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
