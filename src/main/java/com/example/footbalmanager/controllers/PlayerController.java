@@ -12,7 +12,6 @@ import com.example.footbalmanager.services.PlayerService;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/players")
 public class PlayerController {
     private PlayerService playerService;
