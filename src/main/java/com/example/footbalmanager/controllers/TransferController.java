@@ -1,5 +1,6 @@
 package com.example.footbalmanager.controllers;
 
+import com.example.footbalmanager.models.dto.CustomErrorDTO;
 import com.example.footbalmanager.services.ClubService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,9 @@ public class TransferController {
     private ClubService clubService;
 
     @PutMapping("")
-    public ResponseEntity<String> playerTransfer(@RequestParam int playerId,
-                                                 @RequestParam int donorClubId,
-                                                 @RequestParam int recipientClubId) {
+    public ResponseEntity<CustomErrorDTO> playerTransfer(@RequestParam int playerId,
+                                                         @RequestParam int donorClubId,
+                                                         @RequestParam int recipientClubId) {
         return clubService.playerTransfer(playerId, donorClubId, recipientClubId);
     }
 }

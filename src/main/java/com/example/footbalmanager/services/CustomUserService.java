@@ -3,6 +3,7 @@ package com.example.footbalmanager.services;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,13 @@ public class CustomUserService {
 
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
+
+    @Bean
+    private void autoCreateAdminUser() {
+        if (customUserDAO.findCustomUserByLogin("admin") == null) {
+            save(new CustomUserDTO("admin", "admin", "admin@test.com"));
+        }
+    }
 
     private CustomUserDTO convertCustomUserToCustomUserDTO(CustomUser customUser) {
         return new CustomUserDTO();

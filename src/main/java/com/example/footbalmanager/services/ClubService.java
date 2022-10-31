@@ -1,5 +1,6 @@
 package com.example.footbalmanager.services;
 
+import com.example.footbalmanager.models.dto.CustomErrorDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -115,10 +116,10 @@ public class ClubService {
         }
     }
 
-    public ResponseEntity<String> playerTransfer(int playerId, int donorClubId, int recipientClubId) {
+    public ResponseEntity<CustomErrorDTO> playerTransfer(int playerId, int donorClubId, int recipientClubId) {
 
         if (donorClubId == recipientClubId) {
-            return new ResponseEntity<>("it is the same club", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new CustomErrorDTO("it is the same club"), HttpStatus.BAD_REQUEST);
         }
 
         Club donorClub = getCLubByID(donorClubId);
@@ -143,7 +144,7 @@ public class ClubService {
             clubDAO.save(recipientClub);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("No such player in this club", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new CustomErrorDTO("No such player in this club"), HttpStatus.BAD_REQUEST);
         }
     }
 
