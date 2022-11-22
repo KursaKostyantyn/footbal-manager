@@ -1,5 +1,5 @@
 # footbal-manager
-Backend, Java. Football Manager  
+Backend, Java  
 Frontend part https://github.com/KursaKostyantyn/football_manager_react.git  
 A football team/player management system Rest server. 
 
