@@ -20,10 +20,7 @@ public class Club {
     private int account;
     private String city;
     private String country;
-
-
     private int commission;
-
 
     @OneToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -33,6 +30,8 @@ public class Club {
             inverseJoinColumns = @JoinColumn(name = "player_id")
     )
     private List<Player> players;
+
+    private String photo;
 
     public Club(String name, int account, String city, String country, int commission) {
         this.name = name;
@@ -49,5 +48,15 @@ public class Club {
         this.city = city;
         this.country = country;
         this.commission = commission;
+    }
+
+    public Club(String name, int account, String city, String country, int commission, List<Player> players, String photo) {
+        this.name = name;
+        this.account = account;
+        this.city = city;
+        this.country = country;
+        this.commission = commission;
+        this.players = players;
+        this.photo = photo;
     }
 }

@@ -30,6 +30,7 @@ public class Player {
             inverseJoinColumns = @JoinColumn(name = "club_id")
     )
     private Club club;
+    private String photo;
 
     public Player(String firstName, String lastName, int age, String date) {
         this.firstName = firstName;

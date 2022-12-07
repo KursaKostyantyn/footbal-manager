@@ -18,5 +18,6 @@ public class ClubDTO {
     private String country;
     private int commission;
     private List<Player> players;
+    private String photo;
 
 }

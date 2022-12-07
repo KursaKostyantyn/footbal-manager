@@ -8,12 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.footbalmanager.dao.PlayerDAO;
 import com.example.footbalmanager.models.Player;
 import com.example.footbalmanager.models.dto.PlayerDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @Service
@@ -37,7 +40,8 @@ public class PlayerService {
                 player.getLastName(),
                 player.getAge(),
                 player.getStartDate(),
-                clubWithoutPlayers(player.getClub())
+                clubWithoutPlayers(player.getClub()),
+                player.getPhoto()
         );
 
     }
@@ -82,12 +86,15 @@ public class PlayerService {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-
     }
 
     public Player getPlayerById(int id) {
-        return playerDAO.findById(id).orElse(new Player());
+        Player player = playerDAO.findById(id).orElse(new Player());
+        if (player.getFirstName() != null) {
+            return player;
+        } else {
+            return null;
+        }
     }
 
 
@@ -113,5 +120,32 @@ public class PlayerService {
         }
     }
 
+    public ResponseEntity<?> savePlayerPhoto(MultipartFile photo, int id) {
+        String originalFilename = photo.getOriginalFilename();
+        File playersPhoto = new File("playersPhoto");
+
+
+        if (!playersPhoto.exists()) {
+                playersPhoto.mkdir();
+        }
+
+        String pathToSavePhoto = playersPhoto.getAbsolutePath() + File.separator + originalFilename;
+
+        try {
+            photo.transferTo(new File(pathToSavePhoto));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Player player = getPlayerById(id);
+
+        if (player != null) {
+            player.setPhoto(originalFilename);
+            playerDAO.save(player);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
 
 }

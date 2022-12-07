@@ -9,6 +9,7 @@ import java.util.List;
 import com.example.footbalmanager.models.Club;
 import com.example.footbalmanager.models.dto.ClubDTO;
 import com.example.footbalmanager.services.ClubService;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @AllArgsConstructor
@@ -48,7 +49,10 @@ public class ClubController {
 
     }
 
-
+    @PostMapping("photo")
+    public ResponseEntity<?> saveClubPhoto(@RequestParam MultipartFile photo, @RequestParam int id) {
+        return clubService.saveCLubPhoto(photo,id);
+    }
 
 
 }

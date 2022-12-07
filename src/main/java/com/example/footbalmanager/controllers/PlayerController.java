@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import com.example.footbalmanager.models.Player;
 import com.example.footbalmanager.models.dto.PlayerDTO;
 import com.example.footbalmanager.services.PlayerService;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @AllArgsConstructor
@@ -39,6 +42,11 @@ public class PlayerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<PlayerDTO> deletePlayerById(@PathVariable int id) {
         return playerService.deletePlayerById(id);
+    }
+
+    @PostMapping("/photo")
+    public ResponseEntity<?> savePlayerPhoto(@RequestParam MultipartFile photo, @RequestParam int id) {
+       return playerService.savePlayerPhoto(photo, id);
     }
 
 }

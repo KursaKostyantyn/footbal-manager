@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import com.example.footbalmanager.dao.ClubDAO;
 import com.example.footbalmanager.models.Club;
 import com.example.footbalmanager.models.Player;
 import com.example.footbalmanager.models.dto.ClubDTO;
+import org.springframework.web.multipart.MultipartFile;
+
 
 @AllArgsConstructor
 @Service
@@ -43,7 +47,8 @@ public class ClubService {
                 club.getCity(),
                 club.getCountry(),
                 club.getCommission(),
-                club.getPlayers()
+                club.getPlayers(),
+                club.getPhoto()
         );
     }
 
@@ -76,7 +81,13 @@ public class ClubService {
     }
 
     public Club getCLubByID(int id) {
-        return clubDAO.findById(id).orElse(new Club());
+        Club club = clubDAO.findById(id).orElse(new Club());
+        if (club.getName() != null) {
+            return club;
+        } else {
+            return null;
+        }
+
     }
 
     public ResponseEntity<ClubDTO> updateClubById(int id, Club club) {
@@ -106,11 +117,11 @@ public class ClubService {
     public ResponseEntity<ClubDTO> addPlayerToClubById(int playerId, int clubId) {
         Club club = clubDAO.findById(clubId).orElse(new Club());
         Player player = playerService.getPlayerById(playerId);
-        if (club.getName() != null && player.getFirstName() != null) {
+        if (club.getName() != null && player != null) {
             club.getPlayers().add(player);
             clubDAO.save(club);
 
-            return new ResponseEntity<>(convertClubToDTO(club),HttpStatus.OK);
+            return new ResponseEntity<>(convertClubToDTO(club), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -124,6 +135,12 @@ public class ClubService {
 
         Club donorClub = getCLubByID(donorClubId);
         Club recipientClub = getCLubByID(recipientClubId);
+        if (donorClub == null) {
+            return new ResponseEntity<>(new CustomErrorDTO("donor club is not exist"), HttpStatus.BAD_REQUEST);
+        }
+        if (recipientClub == null) {
+            return new ResponseEntity<>(new CustomErrorDTO("recipient club is not exist"), HttpStatus.BAD_REQUEST);
+        }
 
         Player player = donorClub
                 .getPlayers()
@@ -145,6 +162,32 @@ public class ClubService {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new CustomErrorDTO("No such player in this club"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<?> saveCLubPhoto(MultipartFile photo, int id) {
+        String originalFilename = photo.getOriginalFilename();
+        File clubsPhoto = new File("clubsPhoto");
+
+        if (!clubsPhoto.exists()) {
+            clubsPhoto.mkdir();
+        }
+
+        String pathToSavePhoto = clubsPhoto.getAbsolutePath() + File.separator + originalFilename;
+
+        try {
+            photo.transferTo(new File(pathToSavePhoto));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Club club = getCLubByID(id);
+
+        if (club != null) {
+            club.setPhoto(originalFilename);
+            clubDAO.save(club);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

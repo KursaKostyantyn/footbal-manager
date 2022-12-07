@@ -16,4 +16,5 @@ public class PlayerDTO {
     private int age;
     private LocalDate startDate;
     private Club club;
+    private String photo;
 }

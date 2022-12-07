@@ -1,5 +1,6 @@
 package com.example.footbalmanager.services;
 
+import com.example.footbalmanager.constants.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
@@ -30,10 +31,17 @@ public class CustomUserService {
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
 
+    private MailService mailService;
+
     @Bean
-    private void autoCreateAdminUser() {
+    private void autoCreateCustomUser() {
         if (customUserDAO.findCustomUserByLogin("admin") == null) {
-            save(new CustomUserDTO("admin", "admin", "admin@test.com"));
+            save(new CustomUserDTO("admin", "admin", "forjava2022@gmail.com\n", Role.ROLE_ADMIN));
+            activateCustomUser(customUserDAO.findCustomUserByLogin("admin").getId());
+        }
+        if (customUserDAO.findCustomUserByLogin("user") == null) {
+            save(new CustomUserDTO("user", "user", "forjava2022@gmail.com\n", Role.ROLE_USER));
+            activateCustomUser(customUserDAO.findCustomUserByLogin("user").getId());
         }
     }
 
@@ -48,7 +56,11 @@ public class CustomUserService {
             customUser.setLogin(customUserDTO.getLogin());
             customUser.setPassword(passwordEncoder.encode(customUserDTO.getPassword()));
             customUser.setEmail(customUserDTO.getEmail());
+            if (customUserDTO.getRole() != null) customUser.setRole(customUserDTO.getRole());
             customUserDAO.save(customUser);
+            if (customUser.getId()!=0){
+                mailService.sendMail(customUser);
+            }
             return new ResponseEntity<>(customUserDTO, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -62,10 +74,12 @@ public class CustomUserService {
 
     public CustomUser findCustomUserByLogin(String CustomUserLogin) {
         return customUserDAO.findCustomUserByLogin(CustomUserLogin);
-
     }
 
     public ResponseEntity<String> login(CustomUserDTO customUserDTO) {
+        if (!customUserDAO.findCustomUserByLogin(customUserDTO.getLogin()).isActivated()){
+            return new ResponseEntity<>("The user is not activated",HttpStatus.BAD_REQUEST);
+        }
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         customUserDTO.getLogin(), customUserDTO.getPassword()
@@ -82,6 +96,17 @@ public class CustomUserService {
             return new ResponseEntity<>(jwtToken, headers, HttpStatus.OK);
         }
         return new ResponseEntity<>("bad credentials", HttpStatus.FORBIDDEN);
+    }
+
+    public ResponseEntity<?> activateCustomUser (int id){
+        CustomUser customUser = customUserDAO.findById(id).orElse(new CustomUser());
+        if (customUser.getLogin() != null){
+            customUser.setActivated(true);
+            customUserDAO.save(customUser);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 }

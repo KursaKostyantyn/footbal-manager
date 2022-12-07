@@ -26,6 +26,8 @@ public class CustomUser {
 
     private Role role = Role.ROLE_ADMIN;
 
+    private boolean isActivated = false;
+
     public CustomUser(String login, String password, String email) {
         this.login = login;
         this.password = password;
