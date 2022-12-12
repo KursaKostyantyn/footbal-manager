@@ -1,16 +1,18 @@
 package com.example.footbalmanager.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "players")
+@ToString
 @Entity
 public class Club {
     @Id
@@ -29,9 +31,22 @@ public class Club {
             joinColumns = @JoinColumn(name = "club_id"),
             inverseJoinColumns = @JoinColumn(name = "player_id")
     )
+
+    @ToString.Exclude
     private List<Player> players;
 
-    private String photo;
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JsonBackReference(value = "club-customUser")
+    @JoinTable(
+            name = "customUser_club",
+            joinColumns = @JoinColumn(name = "club_id"),
+            inverseJoinColumns = @JoinColumn(name = "customUser_id")
+    )
+    @ToString.Exclude
+    private CustomUser customUser;
+
+    private String photo="noLogo.png";
+    private LocalDate creationDate = LocalDate.now();
 
     public Club(String name, int account, String city, String country, int commission) {
         this.name = name;

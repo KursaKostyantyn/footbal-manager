@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import com.example.footbalmanager.models.Player;
@@ -20,13 +18,13 @@ public class PlayerController {
     private PlayerService playerService;
 
     @PostMapping("")
-    public ResponseEntity<PlayerDTO> savePlayer(@RequestBody Player player) {
-        return playerService.savePlayer(player);
+    public ResponseEntity<PlayerDTO> savePlayer(@RequestParam String customUserLogin, @RequestBody Player player) {
+        return playerService.savePlayer(customUserLogin, player);
     }
 
     @GetMapping("")
     public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
-        return playerService.getAllPlayers();
+        return playerService.getAllPlayersDTO();
     }
 
     @GetMapping("/{id}")
@@ -45,7 +43,7 @@ public class PlayerController {
     }
 
     @PostMapping("/photo")
-    public ResponseEntity<?> savePlayerPhoto(@RequestParam MultipartFile photo, @RequestParam int id) {
+    public ResponseEntity<PlayerDTO> savePlayerPhoto(@RequestParam MultipartFile photo, @RequestParam int id) {
        return playerService.savePlayerPhoto(photo, id);
     }
 

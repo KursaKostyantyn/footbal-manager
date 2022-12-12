@@ -14,18 +14,30 @@ import javax.mail.internet.MimeMessage;
 public class MailService {
     private JavaMailSender javaMailSender;
 
-    public void sendMail(CustomUser customUser){
+
+    private void sendMail(CustomUser customUser, String text) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 
         try {
             helper.setFrom("forjava2022@gmail.com");
             helper.setTo(customUser.getEmail());
-            helper.setText("to activate account visit <a href='http://localhost:3000/activate?id="+customUser.getId()+"'>this</a> link",true);
-        } catch (MessagingException e){
+            helper.setText(text, true);
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
         javaMailSender.send(mimeMessage);
+    }
+
+    public void sendMailForActivateUser(CustomUser customUser) {
+        String text = "to activate account visit <a href='http://localhost:3000/activate?id=" + customUser.getId() + "'>this</a> link";
+        sendMail(customUser, text);
 
     }
+
+    public void sendMailForResetPassword(CustomUser customUser, String password) {
+        String text = "to reset password visit <a href='http://localhost:3000/createNewPassword?resetPassword=" + password + "'>this</a> link";
+        sendMail(customUser, text);
+    }
+
 }

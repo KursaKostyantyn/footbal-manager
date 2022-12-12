@@ -19,8 +19,8 @@ public class ClubController {
     private ClubService clubService;
 
     @PostMapping("")
-    public ResponseEntity<ClubDTO> saveClub(@RequestBody Club club) {
-        return clubService.saveClub(club);
+    public ResponseEntity<ClubDTO> saveClub(@RequestParam String customUserLogin,@RequestBody Club club) {
+        return clubService.saveClub(customUserLogin,club);
     }
 
     @GetMapping("")
@@ -50,7 +50,7 @@ public class ClubController {
     }
 
     @PostMapping("photo")
-    public ResponseEntity<?> saveClubPhoto(@RequestParam MultipartFile photo, @RequestParam int id) {
+    public ResponseEntity<ClubDTO> saveClubPhoto(@RequestParam MultipartFile photo, @RequestParam int id) {
         return clubService.saveCLubPhoto(photo,id);
     }
 

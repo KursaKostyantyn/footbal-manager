@@ -2,6 +2,9 @@ package com.example.footbalmanager.services;
 
 
 import com.example.footbalmanager.models.Club;
+import com.example.footbalmanager.models.CustomUser;
+import com.example.footbalmanager.models.dto.ClubDTO;
+import com.example.footbalmanager.models.dto.CustomUserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class PlayerService {
     private PlayerDAO playerDAO;
 
+    private CustomUserService customUserService;
+
     @Bean
     private void autoCompletePlayers() {
         if (playerDAO.findAll().size() == 0) {
@@ -39,39 +44,52 @@ public class PlayerService {
                 player.getFirstName(),
                 player.getLastName(),
                 player.getAge(),
-                player.getStartDate(),
+                player.getStartDate().toString(),
                 clubWithoutPlayers(player.getClub()),
-                player.getPhoto()
+                player.getPhoto(),
+                player.getCreationDate().toString(),
+                customUserWithoutPlayers(player.getCustomUser())
         );
 
     }
 
-    private Club clubWithoutPlayers(Club club) {
+    private ClubDTO clubWithoutPlayers(Club club) {
         if (club != null) {
-            return new Club(
+            return new ClubDTO(
                     club.getId(),
                     club.getName(),
                     club.getAccount(),
                     club.getCity(),
                     club.getCountry(),
-                    club.getCommission()
+                    club.getCommission(),
+                    club.getPhoto()
             );
         }
-        return new Club();
+        return new ClubDTO();
+    }
+
+    private CustomUserDTO customUserWithoutPlayers(CustomUser customUser) {
+        if (customUser != null) {
+            return new CustomUserDTO(
+                    customUser.getLogin(),
+                    customUser.getEmail()
+            );
+        }
+        return new CustomUserDTO();
     }
 
 
-    public ResponseEntity<PlayerDTO> savePlayer(Player player) {
+    public ResponseEntity<PlayerDTO> savePlayer(String customUserLogin, Player player) {
         if (player != null) {
             playerDAO.save(player);
-            PlayerDTO playerDTO = convertToPlayerDTO(player);
-            return new ResponseEntity<>(playerDTO, HttpStatus.CREATED);
+            customUserService.addPlayerToCustomUser(customUserLogin, player);
+            return new ResponseEntity<>(convertToPlayerDTO(player), HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
+    public ResponseEntity<List<PlayerDTO>> getAllPlayersDTO() {
         return new ResponseEntity<>(playerDAO.findAll()
                 .stream()
                 .map(this::convertToPlayerDTO)
@@ -120,13 +138,12 @@ public class PlayerService {
         }
     }
 
-    public ResponseEntity<?> savePlayerPhoto(MultipartFile photo, int id) {
+    public ResponseEntity<PlayerDTO> savePlayerPhoto(MultipartFile photo, int id) {
         String originalFilename = photo.getOriginalFilename();
         File playersPhoto = new File("playersPhoto");
 
-
         if (!playersPhoto.exists()) {
-                playersPhoto.mkdir();
+            playersPhoto.mkdir();
         }
 
         String pathToSavePhoto = playersPhoto.getAbsolutePath() + File.separator + originalFilename;
@@ -141,11 +158,11 @@ public class PlayerService {
         if (player != null) {
             player.setPhoto(originalFilename);
             playerDAO.save(player);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(convertToPlayerDTO(player), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
+
 
 }

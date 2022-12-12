@@ -12,24 +12,10 @@ import lombok.*;
 public class CustomUserDTO {
 
     private String login;
-    private String password;
     private String email;
-    private Role role;
 
-    public CustomUserDTO(String login, String password) {
+    public CustomUserDTO(String login) {
         this.login = login;
-        this.password = password;
     }
 
-    public CustomUserDTO(String login, String password, String email) {
-        this.login = login;
-        this.password = password;
-        this.email = email;
-    }
-
-    public CustomUserDTO(String login, String password, Role role) {
-        this.login = login;
-        this.password = password;
-        this.role = role;
-    }
-}
+  }

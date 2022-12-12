@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "club")
+@ToString
 @Entity
 public class Player {
     @Id
@@ -21,22 +21,34 @@ public class Player {
     private String lastName;
     private int age;
     private LocalDate startDate;
+    private LocalDate creationDate= LocalDate.now();
 
-    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinTable(
             name = "club_player",
             joinColumns = @JoinColumn(name = "player_id"),
             inverseJoinColumns = @JoinColumn(name = "club_id")
     )
+    @ToString.Exclude
     private Club club;
-    private String photo;
+    private String photo = "noPhoto.png";
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JsonBackReference(value = "player-customUser")
+    @JoinTable(
+            name = "customUser_player",
+            joinColumns = @JoinColumn(name = "player_id"),
+            inverseJoinColumns = @JoinColumn(name = "customUser_id")
+    )
+    @ToString.Exclude
+    private CustomUser customUser;
+
 
     public Player(String firstName, String lastName, int age, String date) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-        System.out.println(date);
         this.startDate = LocalDate.parse(date);
     }
 
@@ -45,4 +57,5 @@ public class Player {
         this.lastName = lastName;
         this.age = age;
     }
+
 }

@@ -1,6 +1,8 @@
 package com.example.footbalmanager.services;
 
+import com.example.footbalmanager.models.CustomUser;
 import com.example.footbalmanager.models.dto.CustomErrorDTO;
+import com.example.footbalmanager.models.dto.CustomUserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClubService {
     private ClubDAO clubDAO;
     private PlayerService playerService;
+    private CustomUserService customUserService;
 
     @Bean
     private void autoComplete() {
@@ -48,15 +51,26 @@ public class ClubService {
                 club.getCountry(),
                 club.getCommission(),
                 club.getPlayers(),
-                club.getPhoto()
+                club.getPhoto(),
+                customUserWithoutPlayers(club.getCustomUser())
         );
     }
 
-    public ResponseEntity<ClubDTO> saveClub(Club club) {
+    private CustomUserDTO customUserWithoutPlayers(CustomUser customUser) {
+        if (customUser != null) {
+            return new CustomUserDTO(
+                    customUser.getLogin(),
+                    customUser.getEmail()
+            );
+        }
+        return new CustomUserDTO();
+    }
+
+    public ResponseEntity<ClubDTO> saveClub(String customUserLogin,Club club) {
         if (club != null) {
             clubDAO.save(club);
-            ClubDTO clubDTO = convertClubToDTO(club);
-            return new ResponseEntity<>(clubDTO, HttpStatus.OK);
+            customUserService.addClubToCustomer(customUserLogin,club);
+            return new ResponseEntity<>(convertClubToDTO(club), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -120,7 +134,6 @@ public class ClubService {
         if (club.getName() != null && player != null) {
             club.getPlayers().add(player);
             clubDAO.save(club);
-
             return new ResponseEntity<>(convertClubToDTO(club), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -165,7 +178,7 @@ public class ClubService {
         }
     }
 
-    public ResponseEntity<?> saveCLubPhoto(MultipartFile photo, int id) {
+    public ResponseEntity<ClubDTO> saveCLubPhoto(MultipartFile photo, int id) {
         String originalFilename = photo.getOriginalFilename();
         File clubsPhoto = new File("clubsPhoto");
 
@@ -185,7 +198,7 @@ public class ClubService {
         if (club != null) {
             club.setPhoto(originalFilename);
             clubDAO.save(club);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(convertClubToDTO(club),HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
