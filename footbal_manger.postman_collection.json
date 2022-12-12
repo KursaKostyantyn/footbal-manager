@@ -1,0 +1,559 @@
+{
+	"info": {
+		"_postman_id": "a04c42da-97b8-4c3f-a128-672b6837c803",
+		"name": "footbal_manger",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21762920"
+	},
+	"item": [
+		{
+			"name": "footbalManager",
+			"item": [
+				{
+					"name": "get all clubs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/clubs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clubs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all players",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyF",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/players",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"players"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get player by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/players/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"players",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get club by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/clubs/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clubs",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get player by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/players/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"players",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save player",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Vasya\",\r\n    \"lastName\": \"Sheva\",\r\n     \"age\": 21,\r\n     \"startDate\":\"2017-01-25\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/players",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"players"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"login\":\"admin\",\r\n\"password\":\"123456\",\r\n\"email\":\"Vasya@Gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"login\":\"admin\",\r\n\"password\":\"123456\",\r\n\"email\":\"Vasya@Gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save club",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"name\":\"Dinamo\",\r\n   \"account\":10000000,\r\n   \"city\":\"Kyiv\",\r\n   \"country\":\"Ukraine\",\r\n   \"commission\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/clubs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clubs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete club  by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/clubs/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clubs",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete players by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/players/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"players",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update club by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"name\":\"Dinamo1\",\r\n   \"account\":100000,\r\n   \"city\":\"Kyiv\",\r\n   \"country\":\"Ukraine\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/clubs/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clubs",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "player transfer by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTY2NzE1OTIwM30.1jcjPk_KOVwVY-edrWUpjUcu6jjZa3nWUwWdvKGlW50XDoMyMuqyT9DciCiWeCuHYDDD0019KFxaGafrvBimmg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/transfer?playerId=2&donorClubId=3&recipientClubId=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"transfer"
+							],
+							"query": [
+								{
+									"key": "playerId",
+									"value": "2"
+								},
+								{
+									"key": "donorClubId",
+									"value": "3"
+								},
+								{
+									"key": "recipientClubId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add player to club",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTY2NzE1OTIwM30.1jcjPk_KOVwVY-edrWUpjUcu6jjZa3nWUwWdvKGlW50XDoMyMuqyT9DciCiWeCuHYDDD0019KFxaGafrvBimmg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/clubs/3/add?playerId=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clubs",
+								"3",
+								"add"
+							],
+							"query": [
+								{
+									"key": "playerId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update player by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Vasya5\",\r\n    \"lastName\": \"Sheva\",\r\n     \"age\": 21,\r\n     \"startDate\":\"2017-01-25\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/players/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"players",
+								"2"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update player by id Copy option",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2YXN5YSJ9.b_xCetOQS4fiXeK1d8AftlCYrJXnhOe3dfmi8y7UUetHPrhyXDiPjJtsDaYlg0zXTUYiP2aHd3HmNXum5FSyFw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "OPTIONS",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Vasya1\",\r\n    \"lastName\": \"Sheva\",\r\n     \"age\": 21,\r\n     \"startDate\":\"2017-01-25\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/players/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"players",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
