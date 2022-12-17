@@ -69,13 +69,17 @@ public class PlayerService {
     }
 
     private CustomUserDTO customUserWithoutPlayers(CustomUser customUser) {
+        CustomUserDTO customUserDTO = new CustomUserDTO();
         if (customUser != null) {
-            return new CustomUserDTO(
-                    customUser.getLogin(),
-                    customUser.getEmail()
-            );
+            customUserDTO.setLogin(customUser.getLogin());
+            customUserDTO.setEmail(customUser.getEmail());
+            customUserDTO.setRole(customUser.getRole());
+            customUserDTO.setActivated(customUser.isActivated());
+            customUserDTO.setBlocked(customUser.isBlocked());
+            customUserDTO.setClubs(customUser.getClubs());
+            return customUserDTO;
         }
-        return new CustomUserDTO();
+        return customUserDTO;
     }
 
 

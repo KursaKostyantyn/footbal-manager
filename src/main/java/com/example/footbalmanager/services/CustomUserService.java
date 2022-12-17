@@ -19,12 +19,15 @@ import org.springframework.stereotype.Service;
 import com.example.footbalmanager.dao.CustomUserDAO;
 import com.example.footbalmanager.models.CustomUser;
 import com.example.footbalmanager.models.dto.CustomUserDTO;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -39,16 +42,29 @@ public class CustomUserService {
 
     @Bean
     private void autoCreateCustomUser() {
+        if (customUserDAO.findCustomUserByLogin("superAdmin") == null) {
+            save(new CustomUser("superAdmin", "admin", "forjava2022@gmail.com", Role.ROLE_SUPERADMIN, true));
+        }
         if (customUserDAO.findCustomUserByLogin("admin") == null) {
-            save(new CustomUser("admin", "admin", "forjava2022@gmail.com\n", Role.ROLE_ADMIN, true));
+            save(new CustomUser("admin", "admin", "forjava2022@gmail.com", Role.ROLE_ADMIN, true));
         }
         if (customUserDAO.findCustomUserByLogin("user") == null) {
-            save(new CustomUser("user", "user", "forjava2022@gmail.com\n", Role.ROLE_USER, true));
+            save(new CustomUser("user", "user", "forjava2022@gmail.com", Role.ROLE_USER, true));
         }
     }
 
     private CustomUserDTO convertCustomUserToCustomUserDTO(CustomUser customUser) {
-        return new CustomUserDTO(customUser.getLogin(), customUser.getEmail());
+        CustomUserDTO customUserDTO = new CustomUserDTO();
+        customUserDTO.setId(customUser.getId());
+        customUserDTO.setLogin(customUser.getLogin());
+        customUserDTO.setEmail(customUser.getEmail());
+        customUserDTO.setRole(customUser.getRole());
+        customUserDTO.setActivated(customUser.isActivated());
+        customUserDTO.setBlocked(customUser.isBlocked());
+        customUserDTO.setPlayers(customUser.getPlayers());
+        customUserDTO.setClubs(customUser.getClubs());
+        customUserDTO.setPhoto(customUser.getPhoto());
+        return customUserDTO;
     }
 
     private String createRandomPassword(int length) {
@@ -75,6 +91,17 @@ public class CustomUserService {
         }
     }
 
+    public ResponseEntity<CustomUserDTO> saveWithoutSendingMail(CustomUser customUser) {
+
+        if (customUser != null) {
+            customUser.setPassword(passwordEncoder.encode(customUser.getPassword()));
+            customUserDAO.save(customUser);
+            return new ResponseEntity<>(convertCustomUserToCustomUserDTO(customUser), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     public List<CustomUser> findAll() {
         return customUserDAO.findAll();
     }
@@ -88,6 +115,9 @@ public class CustomUserService {
         if (!customUserDAO.findCustomUserByLogin(customUser.getLogin()).isActivated()) {
             return new ResponseEntity<>("The user is not activated", HttpStatus.BAD_REQUEST);
         }
+        if (customUserDAO.findCustomUserByLogin(customUser.getLogin()).isBlocked()) {
+            return new ResponseEntity<>("The user is blocked. Contact the admin", HttpStatus.BAD_REQUEST);
+        }
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         customUser.getLogin(), customUser.getPassword()
@@ -97,7 +127,7 @@ public class CustomUserService {
             String jwtToken = Jwts.builder()
                     .setSubject(authenticate.getName())
                     .signWith(SignatureAlgorithm.HS512, "secretKey".getBytes())
-                    .setExpiration(new Date(System.currentTimeMillis() + 50000))
+                    .setExpiration(new Date(System.currentTimeMillis() + 5000000))
                     .compact();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + jwtToken);
@@ -171,5 +201,80 @@ public class CustomUserService {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     }
+
+    public ResponseEntity<?> blockUser(String login, boolean isBlocked) {
+        CustomUser customUser = customUserDAO.findCustomUserByLogin(login);
+        if (customUser.getLogin() != null) {
+            customUser.setBlocked(isBlocked);
+            customUserDAO.save(customUser);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<CustomUserDTO> deleteCustomUserByLogin(String login) {
+        CustomUser customUser = customUserDAO.findCustomUserByLogin(login);
+        if (customUser.getRole() == Role.ROLE_SUPERADMIN) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (customUser.getLogin() != null) {
+            customUserDAO.delete(customUser);
+            return new ResponseEntity<>(convertCustomUserToCustomUserDTO(customUser), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }
+
+    public ResponseEntity<CustomUserDTO> updateCustomUser(CustomUser customUser,int id) {
+        CustomUser oldCustomUser = customUserDAO.findById(id).orElse(new CustomUser());
+        if (oldCustomUser.getLogin() != null) {
+            oldCustomUser.setLogin(customUser.getLogin());
+            oldCustomUser.setEmail(customUser.getEmail());
+            oldCustomUser.setRole(customUser.getRole());
+            oldCustomUser.setBlocked(customUser.isBlocked());
+            oldCustomUser.setActivated(customUser.isActivated());
+            if (customUser.getPassword().equals("")) {
+                oldCustomUser.setPassword(passwordEncoder.encode(customUser.getPassword()));
+            }
+            customUserDAO.save(oldCustomUser);
+            return new ResponseEntity<>(convertCustomUserToCustomUserDTO(oldCustomUser), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }
+
+    public ResponseEntity<List<CustomUserDTO>> getAllCustomUsers() {
+        return new ResponseEntity<>(customUserDAO.findAll()
+                .stream()
+                .map(this::convertCustomUserToCustomUserDTO)
+                .collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+    public ResponseEntity<CustomUserDTO> saveUserPhoto (MultipartFile photo, int id){
+        String originalFilename = photo.getOriginalFilename();
+        File usersPhoto = new File("usersPhoto");
+
+        if (!usersPhoto.exists()) {
+            usersPhoto.mkdir();
+        }
+
+        String pathToSavePhoto = usersPhoto.getAbsolutePath() + File.separator + originalFilename;
+
+        try {
+            photo.transferTo(new File(pathToSavePhoto));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CustomUser customUser = customUserDAO.findById(id).orElse(new CustomUser());
+
+        if (customUser.getLogin() != null) {
+            customUser.setPhoto(originalFilename);
+            customUserDAO.save(customUser);
+            return new ResponseEntity<>(convertCustomUserToCustomUserDTO(customUser), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
 }

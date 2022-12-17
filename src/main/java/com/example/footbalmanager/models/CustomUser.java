@@ -30,6 +30,7 @@ public class CustomUser {
     private Role role = Role.ROLE_ADMIN;
 
     private boolean isActivated = false;
+    private boolean isBlocked=false;
 
     @OneToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JsonManagedReference(value = "player-customUser")
@@ -53,6 +54,7 @@ public class CustomUser {
 
     private String resetPassword;
     private long resetPasswordExpiryDate;
+    private String photo = "noPhoto.png";
 
     public CustomUser(String login, String password, String email, Role role, boolean isActivated) {
         this.login = login;

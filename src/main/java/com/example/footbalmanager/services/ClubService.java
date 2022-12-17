@@ -52,16 +52,20 @@ public class ClubService {
                 club.getCommission(),
                 club.getPlayers(),
                 club.getPhoto(),
-                customUserWithoutPlayers(club.getCustomUser())
+                customUserWithoutClubs(club.getCustomUser())
         );
     }
 
-    private CustomUserDTO customUserWithoutPlayers(CustomUser customUser) {
+    private CustomUserDTO customUserWithoutClubs(CustomUser customUser) {
+        CustomUserDTO customUserDTO = new CustomUserDTO();
         if (customUser != null) {
-            return new CustomUserDTO(
-                    customUser.getLogin(),
-                    customUser.getEmail()
-            );
+            customUserDTO.setLogin(customUser.getLogin());
+            customUserDTO.setEmail(customUser.getEmail());
+            customUserDTO.setRole(customUser.getRole());
+            customUserDTO.setActivated(customUser.isActivated());
+            customUserDTO.setBlocked(customUser.isBlocked());
+            customUserDTO.setPlayers(customUser.getPlayers());
+            return customUserDTO;
         }
         return new CustomUserDTO();
     }
