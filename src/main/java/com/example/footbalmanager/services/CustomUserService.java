@@ -212,20 +212,21 @@ public class CustomUserService {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity<CustomUserDTO> deleteCustomUserByLogin(String login) {
-        CustomUser customUser = customUserDAO.findCustomUserByLogin(login);
+    public ResponseEntity<HttpStatus> deleteCustomUserById(int id) {
+        System.out.println("id=" + id);
+        CustomUser customUser = customUserDAO.findById(id).orElse(new CustomUser());
         if (customUser.getRole() == Role.ROLE_SUPERADMIN) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if (customUser.getLogin() != null) {
             customUserDAO.delete(customUser);
-            return new ResponseEntity<>(convertCustomUserToCustomUserDTO(customUser), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     }
 
-    public ResponseEntity<CustomUserDTO> updateCustomUser(CustomUser customUser,int id) {
+    public ResponseEntity<CustomUserDTO> updateCustomUser(CustomUser customUser, int id) {
         CustomUser oldCustomUser = customUserDAO.findById(id).orElse(new CustomUser());
         if (oldCustomUser.getLogin() != null) {
             oldCustomUser.setLogin(customUser.getLogin());
@@ -250,7 +251,7 @@ public class CustomUserService {
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    public ResponseEntity<CustomUserDTO> saveUserPhoto (MultipartFile photo, int id){
+    public ResponseEntity<CustomUserDTO> saveUserPhoto(MultipartFile photo, int id) {
         String originalFilename = photo.getOriginalFilename();
         File usersPhoto = new File("usersPhoto");
 

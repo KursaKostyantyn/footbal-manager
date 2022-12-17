@@ -2,6 +2,7 @@ package com.example.footbalmanager.controllers;
 
 import com.example.footbalmanager.models.CustomUser;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,9 +54,9 @@ public class CustomUserController {
         return customUserService.saveWithoutSendingMail(customUser);
     }
 
-    @DeleteMapping("admin/users/delete/{login}")
-    public ResponseEntity<CustomUserDTO> deleteCustomUserByLogin (@PathVariable String login){
-        return customUserService.deleteCustomUserByLogin(login);
+    @DeleteMapping("admin/users/delete/{id}")
+    public ResponseEntity<HttpStatus> deleteCustomUserById (@PathVariable int id){
+        return customUserService.deleteCustomUserById(id);
     }
 
     @PutMapping("admin/users/update")
