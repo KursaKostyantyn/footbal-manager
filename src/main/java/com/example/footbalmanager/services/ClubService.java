@@ -4,6 +4,7 @@ import com.example.footbalmanager.models.CustomUser;
 import com.example.footbalmanager.models.dto.CustomErrorDTO;
 import com.example.footbalmanager.models.dto.CustomUserDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class ClubService {
     private PlayerService playerService;
     private CustomUserService customUserService;
 
-    @Bean
+    @Autowired
     private void autoComplete() {
         if (clubDAO.findAll().size() == 0) {
             for (int i = 0; i < 15; i++) {

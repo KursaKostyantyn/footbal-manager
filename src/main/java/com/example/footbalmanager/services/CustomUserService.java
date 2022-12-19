@@ -6,6 +6,7 @@ import com.example.footbalmanager.models.Player;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class CustomUserService {
 
     private MailService mailService;
 
-    @Bean
+    @Autowired
     private void autoCreateCustomUser() {
         if (customUserDAO.findCustomUserByLogin("superAdmin") == null) {
             save(new CustomUser("superAdmin", "admin", "forjava2022@gmail.com", Role.ROLE_SUPERADMIN, true));
